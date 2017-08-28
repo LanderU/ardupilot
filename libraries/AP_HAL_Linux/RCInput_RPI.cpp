@@ -54,7 +54,7 @@
 #define RCIN_RPI_TIMER_BASE      0x7e003004
 
 #define RCIN_RPI_DMA_SRC_INC     (1<<8)
-#define RCIN_RPI_DMA_DEST_INC    (1<<4) 
+#define RCIN_RPI_DMA_DEST_INC    (1<<4)
 #define RCIN_RPI_DMA_NO_WIDE_BURSTS  (1<<26)
 #define RCIN_RPI_DMA_WAIT_RESP   (1<<3)
 #define RCIN_RPI_DMA_D_DREQ      (1<<6)
@@ -202,7 +202,7 @@ uint32_t Memory_table::get_page_count() const
 // Physical addresses of peripheral depends on Raspberry Pi's version
 void RCInput_RPI::set_physical_addresses(int version)
 {
-    if (version == 1) {
+    if (version == 1 || version == 0) {
         dma_base = RCIN_RPI_RPI1_DMA_BASE;
         clk_base = RCIN_RPI_RPI1_CLK_BASE;
         pcm_base = RCIN_RPI_RPI1_PCM_BASE;
@@ -267,11 +267,11 @@ void RCInput_RPI::init_ctrl_data()
     phys_fifo_addr = ((pcm_base + 0x04) & 0x00FFFFFF) | 0x7e000000;
 
     // Init dma control blocks.
-    /*We are transferring 1 byte of GPIO register. Every 56th iteration we are 
-      sampling TIMER register, which length is 8 bytes. So, for every 56 samples of GPIO we need 
-      56 * 1 + 8 = 64 bytes of buffer. Value 56 was selected specially to have a 64-byte "block" 
-      TIMER - GPIO. So, we have integer count of such "blocks" at one virtual page. (4096 / 64 = 64 
-      "blocks" per page. As minimum, we must have 2 virtual pages of buffer (to have integer count of 
+    /*We are transferring 1 byte of GPIO register. Every 56th iteration we are
+      sampling TIMER register, which length is 8 bytes. So, for every 56 samples of GPIO we need
+      56 * 1 + 8 = 64 bytes of buffer. Value 56 was selected specially to have a 64-byte "block"
+      TIMER - GPIO. So, we have integer count of such "blocks" at one virtual page. (4096 / 64 = 64
+      "blocks" per page. As minimum, we must have 2 virtual pages of buffer (to have integer count of
       vitual pages for control blocks): for every 56 iterations (64 bytes of buffer) we need 56 control blocks for GPIO
       sampling, 56 control blocks for setting frequency and 1 control block for sampling timer, so,
       we need 56 + 56 + 1 = 113 control blocks. For integer value, we need 113 pages of control blocks.
@@ -367,7 +367,7 @@ void RCInput_RPI::init_DMA()
     dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = RCIN_RPI_DMA_INT | RCIN_RPI_DMA_END;
     dma_reg[RCIN_RPI_DMA_CONBLK_AD | RCIN_RPI_DMA_CHANNEL << 8] = reinterpret_cast<uintptr_t>(con_blocks->get_page(con_blocks->_phys_pages, 0));//Set first control block address
     dma_reg[RCIN_RPI_DMA_DEBUG | RCIN_RPI_DMA_CHANNEL << 8] = 7;                      // clear debug error flags
-    dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = 0x10880001;                // go, mid priority, wait for outstanding writes    
+    dma_reg[RCIN_RPI_DMA_CS | RCIN_RPI_DMA_CHANNEL << 8] = 0x10880001;                // go, mid priority, wait for outstanding writes
 }
 
 

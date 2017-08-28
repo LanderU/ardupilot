@@ -87,11 +87,11 @@ void Util::_toneAlarm_timer_tick() {
     } else if (state == 3) {
         state = 1;
     }
-    
+
     if (_toneAlarm.is_tune_comp()) {
         state = 0;
     }
-    
+
 }
 
 void Util::set_system_clock(uint64_t time_utc_usec)
@@ -100,8 +100,8 @@ void Util::set_system_clock(uint64_t time_utc_usec)
     timespec ts;
     ts.tv_sec = time_utc_usec/1.0e6;
     ts.tv_nsec = (time_utc_usec % 1000000) * 1000;
-    clock_settime(CLOCK_REALTIME, &ts);    
-#endif    
+    clock_settime(CLOCK_REALTIME, &ts);
+#endif
 }
 
 bool Util::is_chardev_node(const char *path)
@@ -182,6 +182,7 @@ const char *Linux::Util::_hw_names[UTIL_NUM_HARDWARES] = {
     [UTIL_HARDWARE_BEBOP]  = "Mykonos3 board",
     [UTIL_HARDWARE_BEBOP2] = "Milos board",
     [UTIL_HARDWARE_DISCO]  = "Evinrude board",
+    [UTIL_HARDWARE_RPIZW]  = "BCM2835",
 };
 
 #define MAX_SIZE_LINE 50

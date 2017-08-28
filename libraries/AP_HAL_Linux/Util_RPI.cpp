@@ -40,6 +40,9 @@ int UtilRPI::_check_rpi_version()
     } else if (hw == UTIL_HARDWARE_RPI1) {
         printf("Raspberry Pi 1 with BCM2708!\n");
         _rpi_version = 1;
+    }else if (hw == UTIL_HARDWARE_RPIZW){
+        printf("Raspberry Pi Zero W with BCM2835!\n");
+        _rpi_version = 0;
     } else {
         /* defaults to RPi version 2/3 */
         fprintf(stderr, "Could not detect RPi version, defaulting to 2/3\n");
